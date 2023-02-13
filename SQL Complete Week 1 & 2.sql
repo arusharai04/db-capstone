@@ -18,7 +18,7 @@ JOIN menucontents mc
 	USING (MenuID)
 JOIN menuitems mi
 	USING (MenuItemsID)
-WHERE o.total_cost > 150
+WHERE o.TotalCost > 150
 ORDER BY o.TotalCost ASC;
 
 SELECT MenuName FROM menus WHERE MenuID = ANY (SELECT MenuID FROM orders WHERE OrderQuantity > 2);
