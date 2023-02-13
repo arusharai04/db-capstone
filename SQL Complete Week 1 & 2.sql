@@ -1,11 +1,32 @@
 USE littlelemondb;
 SHOW DATABASES;
 SHOW TABLES;
-SELECT c.CustomerID AS CustomerID, c.CustomerName AS Name, o.OrderID AS OrderID, o.TotalCost AS Cost, m.MenuName AS MenuName, mi.Course AS CourseName, mi.Starters AS StartersName FROM customers AS c INNER JOIN orders AS o INNER JOIN menus AS m INNER JOIN menuitems AS mi ON (c.CustomerID = o.CustomerID AND o.MenuID = m.MenuID AND mi.MenuItemsID = mi.MenuItemsID) WHERE o.TotalCost > 150 ORDER BY o.TotalCost ASC;
+SELECT
+    c.CustomerID AS CustomerID,
+    c.CustomerName AS FullName,
+    o.OrderID AS OrderID,
+    o.TotalCost AS Cost,
+    m.MenuName AS MenuName,
+    mi.Course AS CourseName,
+    mi.Starters AS StarterName
+FROM customers c
+JOIN orders o
+	USING (CustomerID)
+JOIN menus m
+	USING (MenuID)
+JOIN menucontents mc
+	USING (MenuID)
+JOIN menuitems mi
+	USING (MenuItemsID)
+WHERE o.total_cost > 150
+ORDER BY o.TotalCost ASC;
+
 SELECT MenuName FROM menus WHERE MenuID = ANY (SELECT MenuID FROM orders WHERE OrderQuantity > 2);
+
 DROP PROCEDURE IF EXISTS GetMaxQuantity;
 CREATE PROCEDURE GetMaxQuantity() SELECT MAX(OrderQuantity) AS 'Max Quantity in Order' FROM orders;
 CALL GetMaxQuantity();
+
 DROP PROCEDURE IF EXISTS GetOrderDetails;
 CREATE PROCEDURE GetOrderDetails(IN CustomerID INT) SELECT OrderID, OrderQuantity, TotalCost FROM orders WHERE CustomerID = CustomerID;
 SET @id = 1;
